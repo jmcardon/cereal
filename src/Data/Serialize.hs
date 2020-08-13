@@ -68,6 +68,7 @@ import qualified Data.IntSet           as IntSet
 import qualified Data.Ratio            as R
 import qualified Data.Tree             as T
 import qualified Data.Sequence         as Seq
+import qualified Data.List.NonEmpty    as NE
 
 import GHC.Generics
 
@@ -478,6 +479,10 @@ instance Serialize a => Serialize (M.Last a) where
 instance Serialize a => Serialize [a] where
     put = putListOf put
     get = getListOf get
+
+instance Serialize a => Serialize (NE.NonEmpty a) where
+    put (x NE.:| xs) = put x >> put xs
+    get = liftM2 (NE.:|) get get
 
 instance (Serialize a) => Serialize (Maybe a) where
     put = putMaybeOf put
